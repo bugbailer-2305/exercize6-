@@ -10,30 +10,25 @@ struct ThreadArgs {
 
 void generate_r_array(int *r_array, int num_elements, int seed);
 
-int main() {
-  int *r_array;
-  int num_elements;
-  int threads;
+int main(int argc, char *argv[]) {
+  int task = atoi(argv[0]);
+  int seed = atoi(argv[1]);
+  int num_elements = atoi(argv[2]);
+  int threads = atoi(argv[3]);
+  char print_results = argv[4];
   pthread_t *thread_ids;
-  int seed;
-  int task;
-  char print_results;
+  int *r_array;
   int i = 0;
 
   printf("Enter Tasks(1 for max, 2 for sum): ");
-  scanf("%d", &task);
 
   printf("Enter Seed: ");
-  scanf("%d", &seed);
 
   printf("Enter Number of elements: ");
-  scanf("%d", &num_elements);
 
   printf("Enter Number of Threads: ");
-  scanf("%d", &threads);
 
   printf("Print Results?(Y for yes)");
-  scanf(" %c", &print_results);
 
   printf("You've entered: \nTask: %d \nSeed: %d \nElement Number: %d \nThread "
          "Number: %d \nPrint "
@@ -42,7 +37,7 @@ int main() {
 
   r_array = malloc(num_elements * sizeof(int));
   generate_r_array(r_array, num_elements, seed);
-  
+
   for (i = 0; i < num_elements; i++) {
     printf("%d\n", r_array[i]);
   }
