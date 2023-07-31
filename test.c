@@ -15,20 +15,10 @@ int main(int argc, char *argv[]) {
   int seed = atoi(argv[1]);
   int num_elements = atoi(argv[2]);
   int threads = atoi(argv[3]);
-  char print_results = argv[4];
+  char print_results = atoi(argv[4]);
   pthread_t *thread_ids;
   int *r_array;
   int i = 0;
-
-  printf("Enter Tasks(1 for max, 2 for sum): ");
-
-  printf("Enter Seed: ");
-
-  printf("Enter Number of elements: ");
-
-  printf("Enter Number of Threads: ");
-
-  printf("Print Results?(Y for yes)");
 
   printf("You've entered: \nTask: %d \nSeed: %d \nElement Number: %d \nThread "
          "Number: %d \nPrint "
