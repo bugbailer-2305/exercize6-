@@ -74,6 +74,10 @@ void generate_r_array(int *r_array, int num_elements, int seed)
     r_array[i] = rand();
   }
 }
+void create_part_array(int *r_array, int num_elements, int threads)
+{
+  int no_of_frags = num_elements % threads;
+}
 
 void *get_sum(int *array_pos, int length)
 {
