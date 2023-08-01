@@ -71,13 +71,15 @@ void threads_function(function_type func, int max_threads, Thread_struct *s)
 
 int main(int argc, char *argv[])
 {
+  Thread_struct *s = malloc(sizeof(Thread_struct));
+  s->length = atoi(argv[2]);
   int task = atoi(argv[0]);
   int seed = atoi(argv[1]);
-  int num_elements = atoi(argv[2]);
+  /*int num_elements = atoi(argv[2]);*/
   int threads = atoi(argv[3]);
   char print_results = atoi(argv[4]);
   pthread_t *thread_ids;
-  int *r_array;
+  /*int *r_array;*/
   int i = 0;
 
   printf("You've entered: \nTask: %d \nSeed: %d \nElement Number: %d \nThread "
@@ -85,8 +87,8 @@ int main(int argc, char *argv[])
          "Results: %c\n",
          task, seed, num_elements, threads, print_results);
 
-  r_array = malloc(num_elements * sizeof(int));
-  generate_r_array(r_array, num_elements, seed);
+  s->array = malloc(num_elements * sizeof(int));
+  generate_r_array(s, seed);
 
   for (i = 0; i < num_elements; i++)
   {
@@ -96,20 +98,16 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-void generate_r_array(int *r_array, int num_elements, int seed)
+void generate_r_array(Thread_struct *s, int seed)
 {
   int i;
 
   srand(seed);
 
-  for (i = 0; i < num_elements; i++)
+  for (i = 0; i < s->length; i++)
   {
-    r_array[i] = rand();
+    s->array[i] = rand();
   }
-}
-void create_part_array(int *r_array, int num_elements, int threads)
-{
-  int no_of_frags = num_elements % threads;
 }
 
 void *get_sum(Thread_struct *s)
