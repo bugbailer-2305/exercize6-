@@ -44,3 +44,17 @@ void generate_r_array(int *r_array, int num_elements, int seed) {
     r_array[i] = rand();
   }
 }
+
+void *get_sum(int *array_pos, int length) {
+  int i;
+  int *sum = malloc(sizeof(int));
+  
+  *sum = 0;
+
+  for (i = 0; i < length; i++) {
+     *sum = (*sum + array_pos[i]) % 1000000;
+  }
+
+  return sum;
+}
+
