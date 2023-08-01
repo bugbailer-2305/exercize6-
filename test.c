@@ -90,11 +90,12 @@ int main(int argc, char *argv[])
   s->array = malloc(num_elements * sizeof(int));
   generate_r_array(s, seed);
 
-  for (i = 0; i < num_elements; i++)
+  for (i = 0; i < s->length; i++)
   {
-    printf("%d\n", r_array[i]);
+    printf("%d\n", s->array[i]);
   }
-  free(r_array);
+  free(s->array);
+  free(s);
   return 0;
 }
 
