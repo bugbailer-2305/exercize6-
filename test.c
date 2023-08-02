@@ -1,7 +1,8 @@
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <pthread.h>
+#include <time.h>
+#include <unistd.h>
 
 struct ThreadArgs
 {
@@ -17,17 +18,18 @@ typedef struct thread_struct
 
 } Thread_struct;
 
-void generate_r_array(int *r_array, int num_elements, int seed);
-void *get_sum(Thread_struct *s);
-void *max(Thread_struct *s);
+void generate_r_array(Thread_struct *s, int seed);
+void *get_sum(void *s);
+void *max(void *s);
 
 void threads_sum_function(int max_threads, Thread_struct *s)
 {
-  pthread_t tids = malloc((max_threads + 1) * sizeof(pthread_t));
-  Thread_struct struc_array = malloc((max_threads + 1) * sizeof(Thread_struct));
+  pthread_t *tids = malloc((max_threads + 1) * sizeof(pthread_t));
+  Thread_struct *struc_array = malloc((max_threads + 1) * sizeof(Thread_struct));
   int part_array = s->length / max_threads;
   int remainder_to_add = max_threads - (s->length % max_threads);
   int displacement_variable = 0;
+  int i, j;
   for (i = 0; i < max_threads; i++)
   {
     Thread_struct *x = malloc(sizeof(Thread_struct));
@@ -45,6 +47,8 @@ void threads_sum_function(int max_threads, Thread_struct *s)
       }
     }
     struc_array[i] = *x;
+    free(x->array);
+    free(x);
     displacement_variable += part_array;
   }
 
@@ -62,21 +66,19 @@ void threads_sum_function(int max_threads, Thread_struct *s)
     pthread_join(tids[i], NULL);
     printf("Thread 0 reaped thread %d\n", i);
   }
-  free(x->array);
-  free(x);
+
   free(struc_array);
   free(tids);
-
-  return 0;
 }
 
 void threads_max_function(int max_threads, Thread_struct *s)
 {
-  pthread_t tids = malloc((max_threads + 1) * sizeof(pthread_t));
-  Thread_struct struc_array = malloc((max_threads + 1) * sizeof(Thread_struct));
+  pthread_t *tids = malloc((max_threads + 1) * sizeof(pthread_t));
+  Thread_struct *struc_array = malloc((max_threads + 1) * sizeof(Thread_struct));
   int part_array = s->length / max_threads;
   int remainder_to_add = max_threads - (s->length % max_threads);
   int displacement_variable = 0;
+  int i, j;
   for (i = 0; i < max_threads; i++)
   {
     Thread_struct *x = malloc(sizeof(Thread_struct));
@@ -94,6 +96,8 @@ void threads_max_function(int max_threads, Thread_struct *s)
       }
     }
     struc_array[i] = *x;
+    free(x->array);
+    free(x);
     displacement_variable += part_array;
   }
 
@@ -111,17 +115,12 @@ void threads_max_function(int max_threads, Thread_struct *s)
     pthread_join(tids[i], NULL);
     printf("Thread 0 reaped thread %d\n", i);
   }
-  free(x->array);
-  free(x);
   free(struc_array);
   free(tids);
-
-  return 0;
 }
 
 int main(int argc, char *argv[])
 {
-  s->length = atoi(argv[2]);
   int task = atoi(argv[0]);
   int seed = atoi(argv[1]);
   /*int num_elements = atoi(argv[2]);*/
@@ -130,13 +129,15 @@ int main(int argc, char *argv[])
   pthread_t *thread_ids;
   /*int *r_array;*/
   int i = 0;
+  Thread_struct *s = malloc(sizeof(Thread_struct));
+  s->length = atoi(argv[2]);
 
   printf("You've entered: \nTask: %d \nSeed: %d \nElement Number: %d \nThread "
          "Number: %d \nPrint "
          "Results: %c\n",
          task, seed, s->length, threads, print_results);
 
-  s->array = malloc(num_elements * sizeof(int));
+  s->array = malloc(s->length * sizeof(int));
   generate_r_array(s, seed);
 
   for (i = 0; i < s->length; i++)
@@ -155,7 +156,8 @@ int main(int argc, char *argv[])
 
   /*------------------------------------------------------------*/
   s->sum = 0;
-  s->max = 0 printf("sum is %d", s->sum);
+  s->max = 0;
+  printf("sum is %d", s->sum);
   printf("max is %d", s->max);
 
   free(s->array);
@@ -175,34 +177,34 @@ void generate_r_array(Thread_struct *s, int seed)
   }
 }
 
-void *get_sum(Thread_struct *s)
+void *get_sum(void *s)
 {
   int i;
   int *sum = malloc(sizeof(int));
 
   *sum = 0;
 
-  for (i = 0; i < s->length; i++)
+  for (i = 0; i < ((Thread_struct *)s)->length; i++)
   {
-    *sum = (*sum + s->array[i]) % 1000000;
+    *sum = (*sum + ((Thread_struct *)s)->array[i]) % 1000000;
   }
 
-  s->sum = sum;
+  ((Thread_struct *)s)->sum = *sum;
 }
 
-void *max(Thread_struct *s)
+void *max(void *s)
 {
   int *max = malloc(sizeof(int));
   int i;
-  *max = s->array[0];
+  *max = ((Thread_struct *)s)->array[0];
 
   /* Iterate through the array and update max if a larger element is found*/
-  for (i = 1; i < s->length; i++)
+  for (i = 1; i < ((Thread_struct *)s)->length; i++)
   {
-    if (s->array[i] > *max)
+    if (((Thread_struct *)s)->array[i] > *max)
     {
-      *max = s->array[i];
+      *max = ((Thread_struct *)s)->array[i];
     }
   }
-  s->max = max;
+  ((Thread_struct *)s)->max = *max;
 }
