@@ -30,12 +30,15 @@ void threads_sum_function(int max_threads, Thread_struct *s)
   int remainder_to_add = max_threads - (s->length % max_threads);
   int displacement_variable = 0;
   int i, j;
-  for (i = 0; i < max_threads; i++)
+  Thread_struct *final = malloc(sizeof(Thread_struct));
+  final->array = malloc((max_threads) * sizeof(int));
+  final->length = max_threads;
+  for (i = 1; i <= max_threads; i++)
   {
     Thread_struct *x = malloc(sizeof(Thread_struct));
-    x->array = malloc(part_array * sizeof(int));
+    x->array = malloc((part_array + 1) * sizeof(int));
     x->length = part_array;
-    for (j = 0; j < part_array; j++)
+    for (j = 1; j <= part_array; j++)
     {
       if ((j + displacement_variable) < s->length)
       {
@@ -66,7 +69,14 @@ void threads_sum_function(int max_threads, Thread_struct *s)
     pthread_join(tids[i], NULL);
     printf("Thread 0 reaped thread %d\n", i);
   }
-
+  for (i = 1; i <= max_threads; i++)
+  {
+    final->array[i - 1] = struc_array[i].sum;
+  }
+  get_sum(final);
+  printf("value of sum bby threads %d", final->sum);
+  free(final->array);
+  free(final);
   free(struc_array);
   free(tids);
 }
@@ -79,12 +89,15 @@ void threads_max_function(int max_threads, Thread_struct *s)
   int remainder_to_add = max_threads - (s->length % max_threads);
   int displacement_variable = 0;
   int i, j;
-  for (i = 0; i < max_threads; i++)
+  Thread_struct *final = malloc(sizeof(Thread_struct));
+  final->array = malloc((max_threads) * sizeof(int));
+  final->length = max_threads;
+  for (i = 1; i <= max_threads; i++)
   {
     Thread_struct *x = malloc(sizeof(Thread_struct));
-    x->array = malloc(part_array * sizeof(int));
+    x->array = malloc((part_array + 1) * sizeof(int));
     x->length = part_array;
-    for (j = 0; j < part_array; j++)
+    for (j = 1; j <= part_array; j++)
     {
       if ((j + displacement_variable) < s->length)
       {
@@ -115,6 +128,14 @@ void threads_max_function(int max_threads, Thread_struct *s)
     pthread_join(tids[i], NULL);
     printf("Thread 0 reaped thread %d\n", i);
   }
+  for (i = 1; i <= max_threads; i++)
+  {
+    final->array[i - 1] = struc_array[i].sum;
+  }
+  max(final);
+  printf("value of sum bby threads %d", final->max);
+  free(final->array);
+  free(final);
   free(struc_array);
   free(tids);
 }
